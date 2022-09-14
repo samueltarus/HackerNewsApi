@@ -28,10 +28,13 @@ class EndpointController extends Controller
             $story = Http::get("https://hacker-news.firebaseio.com/v0/item/" . $res . ".json?print=pretty");
 
             $dataresp[] = json_decode($story, true);
-            $title = $dataresp[0]['title'];
+            $title = $dataresp[$x]['title'];
             $titleArray[$x] = $title;
             $x = $x + 1;
         }
+        $titleList= array_slice($titleArray,10);   
+
+        return $titleList;
 
         return $titleArray;
     }
@@ -50,12 +53,13 @@ class EndpointController extends Controller
             $story = Http::get("https://hacker-news.firebaseio.com/v0/item/" . $res . ".json?print=pretty");
 
             $dataresp[] = json_decode($story, true);
-            $title = $dataresp[0]['title'];
+            $title = $dataresp[$x]['title'];
             $titleArray[$x] = $title;
             $x = $x + 1;
         }
+        $titleList= array_slice($titleArray,10);   
 
-        return $titleArray;
+        return $titleList;
     }
     /**
      * Display a listing of the resource.
@@ -67,23 +71,30 @@ class EndpointController extends Controller
 
     public function index()
     {
+        //fecth  all data ids
         $request = Http::get('https://hacker-news.firebaseio.com/v0/topstories.json?print=pretty');
         $data = $request->json();
+        // filter the last 25 stories
         $items = array_slice($data, -20);
 
         $titleArray = [];
         $x = 0;
+        // loop on each to get themost occuring words
+        
 
         foreach ($items as $res) {
             $story = Http::get("https://hacker-news.firebaseio.com/v0/item/" . $res . ".json?print=pretty");
-
             $dataresp[] = json_decode($story, true);
-            $title = $dataresp[0]['title'];
-            $titleArray[$x] = $title;
+            $title = $dataresp[$x]['title'];
+            $titleArray[$x] = $title;            
             $x = $x + 1;
         }
 
-        return $titleArray;
+        // return 10 occuring  words
+        $titleList= array_slice($titleArray,10);      
+        // check the most occuring words now on the array
+         
+        return $titleList;
     }
 
     /**
