@@ -32,7 +32,7 @@ class EndpointController extends Controller
             $titleArray[$x] = $title;
             $x = $x + 1;
         }
-        $titleList= array_slice($titleArray,10);   
+        $titleList = array_slice($titleArray, 10);
 
         return $titleList;
 
@@ -57,7 +57,7 @@ class EndpointController extends Controller
             $titleArray[$x] = $title;
             $x = $x + 1;
         }
-        $titleList= array_slice($titleArray,10);   
+        $titleList = array_slice($titleArray, 10);
 
         return $titleList;
     }
@@ -80,21 +80,32 @@ class EndpointController extends Controller
         $titleArray = [];
         $x = 0;
         // loop on each to get themost occuring words
-        
+
 
         foreach ($items as $res) {
             $story = Http::get("https://hacker-news.firebaseio.com/v0/item/" . $res . ".json?print=pretty");
             $dataresp[] = json_decode($story, true);
             $title = $dataresp[$x]['title'];
-            $titleArray[$x] = $title;            
+            $titleArray[$x] = $title;
             $x = $x + 1;
         }
 
-        // return 10 occuring  words
-        $titleList= array_slice($titleArray,10);      
-        // check the most occuring words now on the array
-         
-        return $titleList;
+        $data = array();
+        foreach ($titleArray as $sentence) {
+            //gatering words in an array by spliting the sentence on space.
+            $data =  array_merge($data, explode(" ", $sentence));
+        }
+        //counting values present in array for case sensitive
+        $result = array_count_values($data);
+
+        //counting values present in array for case insensitive by changing each array element to lowercase
+        $result = array_count_values(array_map("strtolower", $data));  
+        arsort($result);      
+        // arsort($result);  
+
+        // $titleList = array_slice($result, 10);   
+
+        return $result;
     }
 
     /**
